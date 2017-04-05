@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Teste AlaSQL</title>
+	<script src="http://cdn.jsdelivr.net/alasql/0.3/alasql.min.js"></script>
+</head>
+<body>
+	<p>Por favor acessar o Console (F12 / Aba "Console")</p>
+	<script>
+
+		// Cria a tabela A
+		alasql("CREATE TABLE tabelaA (a INT PRIMARY KEY AUTO_INCREMENT, b string)");
+
+		// Variável que auto incrementa
+		var count = alasql.autoval('tabelaA', 'a', true);
+
+		// Insere os registros na tabela A
+		alasql("INSERT INTO tabelaA VALUES (" + count + ", 'A1'), (" + count + ", 'A2'), (" + count + ", 'A3'), (" + count + ", 'A4')");
+
+		var _tabelaA = alasql("SELECT * FROM tabelaA");
+
+		console.log('tabela A:', _tabelaA);
+
+		// Cria a tabela B e faz foreign key com a tabela A
+		alasql("CREATE TABLE tabelaB (a INT, c string, FOREIGN KEY(a) REFERENCES tabelaA(a))");
+
+		// Insere os registros na tabela B
+		alasql.tables.tabelaB.data = [
+										{a:1,c:'B1'},
+										{a:1,c:'BB1'},
+										{a:2,c:'B2'},
+										{a:2,c:'BB2'},
+										{a:4,c:'B4'}
+									  ];
+
+		var _tabelaB = alasql("SELECT * FROM tabelaB");
+
+		console.log('tabela B:', _tabelaB);
+									  
+		var result = alasql("SELECT tabelaA.a, tabelaA.b, tabelaB.c FROM tabelaA RIGHT OUTER JOIN tabelaB ON tabelaA.a=tabelaB.a;");
+
+		console.log('Resultado do exercício 1:', result);
+
+		var result = alasql("SELECT tabelaA.a, tabelaA.b, tabelaB.c FROM tabelaA FULL OUTER JOIN tabelaB ON tabelaA.a=tabelaB.a;");
+
+		console.log('Resultado do exercício 2:', result);
+
+		var result = alasql("SELECT count(DISTINCT a) FROM tabelaB");
+
+		console.log('Resultado do exercício 3:', result[0]['COUNT(DISTINCT a)']);
+
+	</script>
+</body>
+</html>
